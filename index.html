@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RhythmLab — Timing-Training für Schlagzeuger</title>
+<meta name="description" content="RhythmLab misst dein Timing in Echtzeit über MIDI und macht aus stumpfem Üben ein Spiel mit echtem Fortschritt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     INHALTE, DIE IHR SPÄTER WAHRSCHEINLICH ÄNDERN WOLLT
+     ------------------------------------------------------------
+     Alle Downloadlinks zeigen auf "/releases/latest/download/..."
+     (siehe Script am Dateiende) — das bleibt bei JEDEM neuen
+     Release automatisch aktuell, ohne dass ihr diese Datei
+     anfassen müsst. NUR bei einer neuen App-Version müsst ihr hier
+     nichts tun.
+     Ändern werdet ihr eher: Copy-Texte (direkt im HTML unten),
+     Preis (Abschnitt "pricing"), Impressum/Datenschutz-Links
+     (Footer), Logo/Name ("RhythmLab" — Platzhalter, ersetzen).
+     ============================================================ */
+
+  :root{
+    --bg:            #15161a;
+    --bg-elevated:   #1b1d22;
+    --card:          #1f2127;
+    --border:        #2a2d34;
+    --text:          #f1f0ec;
+    --text-muted:    #93959d;
+    --teal:          #00c9a0;
+    --teal-dim:      #00aa88;
+    --orange:        #ff9933;
+    --radius:        14px;
+    --font-display:  "Space Grotesk", sans-serif;
+    --font-body:     "Inter", sans-serif;
+    --font-mono:     "JetBrains Mono", monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  :focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------------- NAV ---------------- */
+
+  nav.top{
+    position:sticky; top:0; z-index:20;
+    background:rgba(21,22,26,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.top .wrap{
+    height:68px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--font-display); font-weight:700; font-size:19px;
+    letter-spacing:-0.01em;
+  }
+  .brand .mark{
+    width:11px; height:11px; border-radius:3px;
+    background:var(--teal);
+    box-shadow:0 0 14px rgba(0,201,160,0.7);
+  }
+  .nav-links{ display:flex; align-items:center; gap:32px; }
+  .nav-links a{
+    font-size:14px; color:var(--text-muted); font-weight:500;
+    transition:color .15s ease;
+  }
+  .nav-links a:hover{ color:var(--text); }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-body); font-weight:600; font-size:14px;
+    padding:11px 20px; border-radius:10px;
+    border:1px solid transparent;
+    cursor:pointer; transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn-primary{
+    background:var(--teal-dim); color:#08120f;
+  }
+  .btn-primary:hover{ background:var(--teal); }
+  .btn-ghost{
+    background:transparent; color:var(--text); border-color:var(--border);
+  }
+  .btn-ghost:hover{ border-color:var(--teal-dim); }
+
+  /* ---------------- HERO ---------------- */
+
+  header.hero{
+    padding:104px 0 88px;
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.12em;
+    color:var(--teal); text-transform:uppercase; font-weight:600;
+    display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:""; width:22px; height:1px; background:var(--teal);
+  }
+  h1{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(38px, 5.4vw, 62px);
+    line-height:1.05; letter-spacing:-0.02em;
+    max-width:15ch; margin-bottom:22px;
+  }
+  h1 .accent{ color:var(--teal); }
+  .hero p.sub{
+    font-size:18px; color:var(--text-muted); max-width:46ch; margin-bottom:36px;
+  }
+  .hero-cta{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:64px; }
+  .hero-cta .btn-primary{ padding:14px 26px; font-size:15px; }
+  .hero-cta .alt-os{ font-size:13px; color:var(--text-muted); }
+  .hero-cta .alt-os a{ color:var(--text); border-bottom:1px solid var(--border); }
+  .hero-cta .alt-os a:hover{ border-color:var(--teal); color:var(--teal); }
+
+  /* ---- Signatur-Element: animierte Step-Chip-Sequenz, dieselbe
+         visuelle Sprache wie der Pattern-Editor in der App selbst
+         (pattern_display.py) — teal = Note, orange gestrichelt = Rest,
+         ein Cursor läuft im Loop durch. ---- */
+  .sequencer{
+    display:flex; gap:6px; align-items:flex-end; height:64px;
+    padding:14px 0;
+  }
+  .chip{
+    border-radius:5px; position:relative; flex-shrink:0;
+    background:rgba(0,201,160,0.16);
+    border:2px solid rgba(0,201,160,0.3);
+    height:36px;
+    animation:pulse 3.2s ease-in-out infinite;
+  }
+  .chip.rest{
+    background:transparent;
+    border:2px dashed rgba(255,153,51,0.4);
+  }
+  .chip.w1{ width:64px; } .chip.w2{ width:40px; }
+  .chip.w3{ width:26px; } .chip.w4{ width:18px; }
+
+  @keyframes pulse{
+    0%, 92%, 100%{ border-color:rgba(0,201,160,0.3); background:rgba(0,201,160,0.16); box-shadow:none; }
+    4%{ border-color:var(--teal); background:rgba(0,201,160,0.5); box-shadow:0 0 18px rgba(0,201,160,0.55); }
+  }
+  .chip.rest{ animation:pulse-rest 3.2s ease-in-out infinite; }
+  @keyframes pulse-rest{
+    0%, 92%, 100%{ border-color:rgba(255,153,51,0.4); box-shadow:none; }
+    4%{ border-color:var(--orange); box-shadow:0 0 16px rgba(255,153,51,0.5); }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .chip{ animation:none !important; }
+  }
+
+  /* ---------------- FEATURES ---------------- */
+
+  section{ padding:88px 0; border-bottom:1px solid var(--border); }
+  .section-head{ max-width:52ch; margin-bottom:52px; }
+  .section-head h2{
+    font-family:var(--font-display); font-weight:600;
+    font-size:clamp(26px, 3vw, 34px); letter-spacing:-0.015em; margin-bottom:12px;
+  }
+  .section-head p{ color:var(--text-muted); font-size:16px; }
+
+  .grid-3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:28px;
+  }
+  .card .stat{
+    font-family:var(--font-mono); font-weight:600; font-size:13px;
+    color:var(--orange); letter-spacing:0.04em; margin-bottom:16px;
+    display:inline-block;
+  }
+  .card h3{
+    font-family:var(--font-display); font-weight:600; font-size:19px; margin-bottom:10px;
+  }
+  .card p{ color:var(--text-muted); font-size:14.5px; }
+
+  /* ---------------- DOWNLOAD ---------------- */
+
+  .grid-downloads{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+  .dl-card{
+    background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius);
+    padding:28px; display:flex; flex-direction:column; gap:14px;
+  }
+  .dl-card .os-name{ font-family:var(--font-display); font-weight:600; font-size:18px; }
+  .dl-card .os-req{ font-family:var(--font-mono); font-size:12.5px; color:var(--text-muted); }
+  .dl-card .btn{ margin-top:8px; width:100%; }
+  .releases-link{
+    display:block; text-align:center; margin-top:24px; font-size:13.5px; color:var(--text-muted);
+  }
+  .releases-link a{ color:var(--teal); border-bottom:1px solid transparent; }
+  .releases-link a:hover{ border-color:var(--teal); }
+
+  /* ---------------- PRICING ---------------- */
+
+  .pricing-card{
+    max-width:420px; margin:0 auto; text-align:center;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:44px 36px;
+  }
+  .pricing-card .plan{ font-family:var(--font-mono); font-size:12px; letter-spacing:0.1em; color:var(--teal); text-transform:uppercase; margin-bottom:14px; }
+  .pricing-card .price{ font-family:var(--font-display); font-size:52px; font-weight:700; margin-bottom:4px; }
+  .pricing-card .price span{ font-size:16px; color:var(--text-muted); font-weight:500; font-family:var(--font-body); }
+  .pricing-card .note{ color:var(--text-muted); font-size:14px; margin-bottom:28px; }
+  .pricing-card ul{ list-style:none; text-align:left; margin-bottom:32px; }
+  .pricing-card li{ font-size:14.5px; color:var(--text); padding:7px 0; display:flex; gap:10px; }
+  .pricing-card li::before{ content:"✓"; color:var(--teal); font-weight:700; }
+  .pricing-card .btn{ width:100%; }
+
+  /* ---------------- FOOTER ---------------- */
+
+  footer{ padding:40px 0; }
+  footer .wrap{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  footer .brand{ font-size:15px; }
+  footer .legal{ display:flex; gap:24px; font-size:13.5px; color:var(--text-muted); }
+  footer .legal a:hover{ color:var(--text); }
+
+  @media (max-width:820px){
+    .grid-3, .grid-downloads{ grid-template-columns:1fr; }
+    header.hero{ padding:80px 0 64px; }
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span>RhythmLab</div>
+    <div class="nav-links">
+      <a href="#features">Funktionen</a>
+      <a href="#download">Download</a>
+      <a href="#pricing">Preise</a>
+      <a class="btn btn-primary" href="#download">App herunterladen</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Timing-Training für Schlagzeuger</div>
+    <h1>Übe auf den Punkt.<br>Beweise es, <span class="accent">Schlag für Schlag.</span></h1>
+    <p class="sub">
+      RhythmLab misst dein Timing in Echtzeit über MIDI, zeigt dir genau,
+      wo du zu früh oder zu spät bist, und macht aus stumpfem Üben ein
+      Spiel mit echtem Fortschritt.
+    </p>
+
+    <!-- Step-Sequenzer-Signatur: rein dekorativ/animiert, spiegelt
+         den Pattern-Editor der App selbst wider. -->
+    <div class="sequencer" aria-hidden="true">
+      <div class="chip w1"></div>
+      <div class="chip w3"></div>
+      <div class="chip rest w3"></div>
+      <div class="chip w2"></div>
+      <div class="chip w4"></div>
+      <div class="chip w4"></div>
+      <div class="chip w3"></div>
+      <div class="chip w1"></div>
+      <div class="chip rest w4"></div>
+      <div class="chip w3"></div>
+      <div class="chip w2"></div>
+      <div class="chip w3"></div>
+    </div>
+
+    <div class="hero-cta">
+      <a id="primary-download" class="btn btn-primary" href="#download">
+        Für Windows herunterladen
+      </a>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Kein Metronom-Rätselraten mehr</h2>
+      <p>Drei Dinge, die RhythmLab anders macht als "einfach zum Klick spielen".</p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="stat">±ms</span>
+        <h3>Echtzeit-Analyse</h3>
+        <p>Jeder Schlag wird per MIDI erfasst und live mit dem Referenzmuster
+           verglichen — Genauigkeit, Stabilität und Tendenz zu früh oder spät,
+           in Zahlen statt Bauchgefühl.</p>
+      </div>
+      <div class="card">
+        <span class="stat">1 – 32</span>
+        <h3>Eigene Muster</h3>
+        <p>Baue Rhythmen direkt im Pattern-Editor oder importiere fertige
+           Lektionen deines Lehrers als MusicXML — vom Ganzton bis zur
+           32stel-Note.</p>
+      </div>
+      <div class="card">
+        <span class="stat">XP</span>
+        <h3>Übung, die motiviert</h3>
+        <p>Level, tägliche Streaks und bestandene Tests halten dich bei der
+           Sache, ohne dass sich Üben wie eine Pflichtübung anfühlt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Herunterladen</h2>
+      <p>Ein MIDI-Gerät (E-Drum-Modul, Pad-Controller, ...) genügt. Kostenlos
+         herunterladen — ein Konto mit aktivem Abo brauchst du erst zum
+         Starten der App. Aktuell nur für Windows verfügbar.</p>
+    </div>
+    <div class="grid-downloads" style="grid-template-columns:1fr; max-width:360px; margin:0 auto;">
+
+      <div class="dl-card">
+        <div class="os-name">Windows</div>
+        <div class="os-req">Windows 10/11 · 64-bit</div>
+        <a class="btn btn-primary" data-dl="windows" href="#">Download für Windows</a>
+      </div>
+
+    </div>
+    <div class="releases-link">
+      Ältere Versionen &amp; Änderungsprotokoll: <a id="releases-page-link" href="#" target="_blank" rel="noopener">alle Releases auf GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head" style="margin:0 auto 52px; text-align:center;">
+      <h2>Ein Plan. Keine Überraschungen.</h2>
+      <p style="margin:0 auto;">Das Abo wird direkt in der App über Stripe abgeschlossen — lade sie
+         herunter, logge dich ein, und du wirst durch den Checkout geführt.</p>
+    </div>
+    <div class="pricing-card">
+      <div class="plan">RhythmLab Pro</div>
+      <div class="price">9&nbsp;€<span>&nbsp;/ Monat</span></div>
+      <div class="note">Jederzeit kündbar</div>
+      <ul>
+        <li>Unbegrenzte eigene Muster &amp; Lektionen</li>
+        <li>Echtzeit-Timing-Analyse per MIDI</li>
+        <li>Fortschritt &amp; Cloud-Sync geräteübergreifend</li>
+        <li>Level, Streaks &amp; Testmodus</li>
+      </ul>
+      <a class="btn btn-primary" href="#download">App herunterladen, dann abonnieren</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="mark" style="width:8px;height:8px;"></span>RhythmLab</div>
+    <div class="legal">
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutz</a>
+      <a href="mailto:support@example.com">Kontakt</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ============================================================
+     KONFIGURATION — hier tragt ihr einmalig euer GitHub-Repo ein.
+     Die Downloadlinks brauchen danach bei neuen App-Versionen KEINE
+     Änderung mehr: "/releases/latest/download/<datei>" liefert
+     immer automatisch die aktuellste hochgeladene Datei dieses
+     Namens (siehe .github/workflows/build-release.yml, das genau
+     diese Dateinamen erzeugt).
+     ============================================================ */
+  const GITHUB_OWNER = "Tim0324";
+  const GITHUB_REPO  = "drumtiming-releases";
+
+  // Einzelne .exe (--onefile-Build), kein .zip mehr — Dateiname muss
+  // bei jedem künftigen manuellen Release exakt so wieder hochgeladen
+  // werden, sonst zeigt der Link ins Leere.
+  const ASSETS = {
+    windows: "DrumTiming.exe",
+  };
+
+  const releaseBase = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest/download/`;
+  const releasesPage = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases`;
+
+  document.querySelectorAll("[data-dl]").forEach(el => {
+    const os = el.getAttribute("data-dl");
+    el.href = releaseBase + ASSETS[os];
+  });
+  document.getElementById("releases-page-link").href = releasesPage;
+
+  // Nur Windows im Angebot — der große Hero-Button zeigt daher immer
+  // direkt auf die feste "latest"-Download-URL, ohne OS-Erkennung.
+  const primary = document.getElementById("primary-download");
+  primary.href = releaseBase + ASSETS.windows;
+</script>
+
+</body>
+</html>
