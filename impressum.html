@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum — RhythmLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:            #15161a;
+    --card:          #1f2127;
+    --border:        #2a2d34;
+    --text:          #f1f0ec;
+    --text-muted:    #93959d;
+    --teal:          #00c9a0;
+    --teal-dim:      #00aa88;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Inter",sans-serif; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:var(--teal); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+
+  nav.top{
+    position:sticky; top:0; z-index:20;
+    background:rgba(21,22,26,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.top .wrap{
+    max-width:760px; margin:0 auto; padding:0 24px;
+    height:64px; display:flex; align-items:center; gap:10px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:18px;
+  }
+  .brand .mark{
+    width:10px; height:10px; border-radius:3px;
+    background:var(--teal); box-shadow:0 0 12px rgba(0,201,160,0.7);
+  }
+  .back{ margin-left:auto; font-size:14px; color:var(--text-muted); }
+  .back:hover{ color:var(--text); }
+
+  main{ max-width:760px; margin:0 auto; padding:56px 24px 80px; }
+
+  h1{
+    font-family:"Space Grotesk",sans-serif; font-weight:700;
+    font-size:32px; letter-spacing:-0.01em; margin-bottom:28px;
+  }
+  h2{
+    font-family:"Space Grotesk",sans-serif; font-weight:600;
+    font-size:19px; margin:32px 0 10px;
+  }
+  p{ color:var(--text-muted); font-size:15.5px; margin-bottom:4px; }
+  p + h2{ margin-top:36px; }
+
+  footer{ border-top:1px solid var(--border); padding:28px 0; }
+  footer .wrap{
+    max-width:760px; margin:0 auto; padding:0 24px;
+    font-size:13.5px; color:var(--text-muted);
+    display:flex; gap:20px; flex-wrap:wrap;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span>RhythmLab</div>
+    <a class="back" href="/">← Zurück zur Startseite</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Impressum</h1>
+
+  <p>Timo Karl<br>
+  Drum Analyser Software<br>
+  Panoramastraße 1<br>
+  71711 Steinheim</p>
+
+  <h2>Kontakt</h2>
+  <p>Telefon: +49 (0) 15253429601<br>
+  E-Mail: <a href="mailto:info@drumtiming.com">info@drumtiming.com</a></p>
+
+  <h2>Verbraucherstreitbeilegung/Universalschlichtungsstelle</h2>
+  <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren
+     vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="/">RhythmLab</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/datenschutz.html">Datenschutz</a>
+  </div>
+</footer>
+
+</body>
+</html>
