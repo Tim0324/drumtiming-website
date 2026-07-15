@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurs erstellen — RhythmLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:            #15161a;
+    --bg-elevated:   #1b1d22;
+    --card:          #1f2127;
+    --border:        #2a2d34;
+    --text:          #f1f0ec;
+    --text-muted:    #93959d;
+    --teal:          #00c9a0;
+    --teal-dim:      #00aa88;
+    --orange:        #ff9933;
+    --red:           #ff5c5c;
+    --radius:        14px;
+    --font-display:  "Space Grotesk", sans-serif;
+    --font-body:     "Inter", sans-serif;
+    --font-mono:     "JetBrains Mono", monospace;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font-body);
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
+
+  .wrap{ max-width:760px; margin:0 auto; padding:0 24px; }
+
+  nav.top{
+    position:sticky; top:0; z-index:20;
+    background:rgba(21,22,26,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.top .wrap{
+    height:64px; display:flex; align-items:center; gap:10px; max-width:820px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--font-display); font-weight:700; font-size:18px;
+  }
+  .brand .mark{
+    width:10px; height:10px; border-radius:3px; background:var(--teal);
+    box-shadow:0 0 12px rgba(0,201,160,0.7);
+  }
+  .back{ margin-left:auto; font-size:14px; color:var(--text-muted); }
+  .back:hover{ color:var(--text); }
+
+  main{ max-width:820px; margin:0 auto; padding:48px 24px 100px; }
+
+  h1{
+    font-family:var(--font-display); font-weight:700; font-size:30px;
+    letter-spacing:-0.01em; margin-bottom:8px;
+  }
+  .lead{ color:var(--text-muted); font-size:15px; margin-bottom:36px; max-width:56ch; }
+
+  section.block{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:28px; margin-bottom:22px;
+  }
+  section.block h2{
+    font-family:var(--font-display); font-weight:600; font-size:17px; margin-bottom:18px;
+  }
+
+  label{
+    display:block; font-size:13px; font-weight:600; color:var(--text-muted);
+    margin-bottom:6px; letter-spacing:0.01em;
+  }
+  .field{ margin-bottom:18px; }
+  .field:last-child{ margin-bottom:0; }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+  input[type="text"], input[type="number"], textarea{
+    width:100%; background:var(--bg-elevated); border:1px solid var(--border);
+    border-radius:9px; padding:11px 13px; color:var(--text); font-family:var(--font-body);
+    font-size:14.5px; transition:border-color .15s ease;
+  }
+  input:focus, textarea:focus{ border-color:var(--teal-dim); }
+  textarea{ resize:vertical; min-height:70px; }
+  .hint{ font-size:12.5px; color:var(--text-muted); margin-top:6px; }
+
+  .lesson-card{
+    background:var(--bg-elevated); border:1px solid var(--border); border-radius:12px;
+    padding:22px; margin-bottom:16px; position:relative;
+  }
+  .lesson-card .lesson-head{
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+  }
+  .lesson-head .tag{
+    font-family:var(--font-mono); font-size:12px; color:var(--teal); letter-spacing:0.06em;
+    text-transform:uppercase;
+  }
+  .remove-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-muted);
+    border-radius:8px; padding:6px 10px; font-size:12.5px; cursor:pointer;
+    font-family:var(--font-body); transition:border-color .15s ease, color .15s ease;
+  }
+  .remove-btn:hover{ border-color:var(--red); color:var(--red); }
+
+  .file-drop{
+    border:1.5px dashed var(--border); border-radius:9px; padding:16px;
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .file-drop:hover{ border-color:var(--teal-dim); }
+  .file-drop.has-file{ border-style:solid; border-color:var(--teal-dim); background:rgba(0,201,160,0.06); }
+  .file-drop .icon{
+    width:34px; height:34px; border-radius:8px; background:rgba(0,201,160,0.14);
+    display:flex; align-items:center; justify-content:center; color:var(--teal); flex-shrink:0; font-size:15px;
+  }
+  .file-drop .fname{ font-size:13.5px; color:var(--text); }
+  .file-drop .fhint{ font-size:12.5px; color:var(--text-muted); }
+  .file-drop input[type="file"]{ display:none; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-body); font-weight:600; font-size:14px;
+    padding:12px 22px; border-radius:10px; border:1px solid transparent;
+    cursor:pointer; transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
+  .btn-primary{ background:var(--teal-dim); color:#08120f; }
+  .btn-primary:hover{ background:var(--teal); }
+  .btn-ghost{ background:transparent; color:var(--text); border-color:var(--border); width:100%; }
+  .btn-ghost:hover{ border-color:var(--teal-dim); }
+
+  .add-lesson{
+    width:100%; padding:14px; border:1.5px dashed var(--border); border-radius:10px;
+    background:transparent; color:var(--text-muted); font-family:var(--font-body);
+    font-size:14px; font-weight:600; cursor:pointer; transition:border-color .15s ease, color .15s ease;
+  }
+  .add-lesson:hover{ border-color:var(--teal-dim); color:var(--teal); }
+
+  .footer-actions{
+    display:flex; align-items:center; gap:16px; margin-top:30px; flex-wrap:wrap;
+  }
+  .status{ font-size:13.5px; color:var(--text-muted); }
+  .status.err{ color:var(--red); }
+  .status.ok{ color:var(--teal); }
+
+  @media (max-width:640px){
+    .row, .row3{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span>RhythmLab</div>
+    <a class="back" href="/">← Zurück zur Startseite</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Kurs erstellen</h1>
+  <p class="lead">Trage die Kursdaten ein, lade für jede Lektion die passende
+     MusicXML-Datei hoch und lade am Ende ein fertiges Kurspaket (ZIP mit
+     <code>course.json</code> + allen Lektionsdateien) herunter.</p>
+
+  <section class="block">
+    <h2>Kursdaten</h2>
+    <div class="field">
+      <label for="course-name">Kursname</label>
+      <input type="text" id="course-name" placeholder="z. B. Beginner Drum Timing">
+    </div>
+    <div class="field">
+      <label for="course-author">Autor</label>
+      <input type="text" id="course-author" placeholder="z. B. Dein Name">
+    </div>
+    <div class="field">
+      <label for="course-desc">Beschreibung</label>
+      <textarea id="course-desc" placeholder="Kurze Beschreibung des Kurses"></textarea>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Lektionen</h2>
+    <div id="lessons-container"></div>
+    <button type="button" class="add-lesson" id="add-lesson-btn">+ Lektion hinzufügen</button>
+  </section>
+
+  <div class="footer-actions">
+    <button type="button" class="btn btn-primary" id="build-zip-btn">Kurs als ZIP erstellen</button>
+    <span class="status" id="status-text"></span>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+  const lessonsContainer = document.getElementById('lessons-container');
+  const addLessonBtn = document.getElementById('add-lesson-btn');
+  const buildZipBtn = document.getElementById('build-zip-btn');
+  const statusText = document.getElementById('status-text');
+
+  let lessonCount = 0;
+
+  function addLesson(){
+    lessonCount++;
+    const id = lessonCount;
+    const card = document.createElement('div');
+    card.className = 'lesson-card';
+    card.dataset.id = id;
+    card.innerHTML = `
+      <div class="lesson-head">
+        <span class="tag">Lektion ${id}</span>
+        <button type="button" class="remove-btn" data-action="remove">Entfernen</button>
+      </div>
+      <div class="field">
+        <label>Titel</label>
+        <input type="text" class="l-title" placeholder="z. B. Lesson 1 - Quarter Notes">
+      </div>
+      <div class="field">
+        <label>MusicXML-Datei</label>
+        <div class="file-drop" data-action="pick-file">
+          <div class="icon">↑</div>
+          <div>
+            <div class="fname" data-role="fname">Keine Datei ausgewählt</div>
+            <div class="fhint">Klicken zum Hochladen (.xml)</div>
+          </div>
+          <input type="file" class="l-file" accept=".xml,text/xml,application/xml">
+        </div>
+      </div>
+      <div class="row3" style="margin-top:16px;">
+        <div class="field">
+          <label>Ziel-BPM</label>
+          <input type="number" class="l-bpm" min="1" placeholder="z. B. 90">
+        </div>
+        <div class="field">
+          <label>Zähler (beats/bar)</label>
+          <input type="number" class="l-beats" min="1" placeholder="optional">
+        </div>
+        <div class="field">
+          <label>Nenner (beat note)</label>
+          <input type="number" class="l-notevalue" min="1" placeholder="optional">
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px;">
+        <label>Bestehensgrenze (%)</label>
+        <input type="number" class="l-pass" min="0" max="100" placeholder="z. B. 80">
+      </div>
+    `;
+    lessonsContainer.appendChild(card);
+
+    const dropZone = card.querySelector('.file-drop');
+    const fileInput = card.querySelector('.l-file');
+    const fnameEl = card.querySelector('[data-role="fname"]');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if(fileInput.files.length){
+        fnameEl.textContent = fileInput.files[0].name;
+        dropZone.classList.add('has-file');
+      } else {
+        fnameEl.textContent = 'Keine Datei ausgewählt';
+        dropZone.classList.remove('has-file');
+      }
+    });
+
+    card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      card.remove();
+      renumberLessons();
+    });
+  }
+
+  function renumberLessons(){
+    const cards = lessonsContainer.querySelectorAll('.lesson-card');
+    cards.forEach((card, index) => {
+      card.querySelector('.tag').textContent = `Lektion ${index + 1}`;
+    });
+  }
+
+  addLessonBtn.addEventListener('click', addLesson);
+  addLesson(); // Start mit einer Lektion
+
+  function setStatus(msg, type){
+    statusText.textContent = msg;
+    statusText.className = 'status' + (type ? ' ' + type : '');
+  }
+
+  function sanitizeFileName(name){
+    // Ersetzt alles außer Buchstaben/Zahlen/Punkt/Bindestrich/Unterstrich
+    return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  }
+
+  async function buildZip(){
+    setStatus('', '');
+
+    const name = document.getElementById('course-name').value.trim();
+    const author = document.getElementById('course-author').value.trim();
+    const description = document.getElementById('course-desc').value.trim();
+
+    if(!name){
+      setStatus('Bitte einen Kursnamen eingeben.', 'err');
+      return;
+    }
+
+    const cards = Array.from(lessonsContainer.querySelectorAll('.lesson-card'));
+    if(cards.length === 0){
+      setStatus('Bitte mindestens eine Lektion hinzufügen.', 'err');
+      return;
+    }
+
+    const lessons = [];
+    const zip = new JSZip();
+    const usedFileNames = new Set();
+
+    for(let i = 0; i < cards.length; i++){
+      const card = cards[i];
+      const title = card.querySelector('.l-title').value.trim();
+      const fileInput = card.querySelector('.l-file');
+      const bpm = card.querySelector('.l-bpm').value.trim();
+      const beats = card.querySelector('.l-beats').value.trim();
+      const noteValue = card.querySelector('.l-notevalue').value.trim();
+      const passScore = card.querySelector('.l-pass').value.trim();
+
+      if(!title){
+        setStatus(`Lektion ${i + 1}: bitte einen Titel eingeben.`, 'err');
+        return;
+      }
+      if(!fileInput.files.length){
+        setStatus(`Lektion ${i + 1}: bitte eine MusicXML-Datei hochladen.`, 'err');
+        return;
+      }
+      if(!bpm){
+        setStatus(`Lektion ${i + 1}: bitte ein Ziel-BPM eingeben.`, 'err');
+        return;
+      }
+      if(!passScore){
+        setStatus(`Lektion ${i + 1}: bitte eine Bestehensgrenze eingeben.`, 'err');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      let fileName = sanitizeFileName(file.name);
+      // Eindeutigkeit sicherstellen, falls zwei Lektionen denselben Dateinamen haben
+      let base = fileName.replace(/\.xml$/i, '');
+      let candidate = fileName;
+      let suffix = 1;
+      while(usedFileNames.has(candidate)){
+        candidate = `${base}_${suffix}.xml`;
+        suffix++;
+      }
+      fileName = candidate;
+      usedFileNames.add(fileName);
+
+      const fileContent = await file.text();
+      zip.file(fileName, fileContent);
+
+      const lessonEntry = {
+        title: title,
+        file: fileName,
+        target_bpm: Number(bpm),
+        pass_score: Number(passScore)
+      };
+      if(beats) lessonEntry.beats_per_bar = Number(beats);
+      if(noteValue) lessonEntry.beat_note = Number(noteValue);
+
+      lessons.push(lessonEntry);
+    }
+
+    const courseObj = {
+      name: name,
+      author: author || undefined,
+      description: description || undefined,
+      lessons: lessons
+    };
+    // undefined-Felder aus dem JSON entfernen
+    Object.keys(courseObj).forEach(k => courseObj[k] === undefined && delete courseObj[k]);
+
+    zip.file('course.json', JSON.stringify(courseObj, null, 2));
+
+    setStatus('ZIP wird erstellt …', '');
+    buildZipBtn.disabled = true;
+
+    try {
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const safeCourseName = sanitizeFileName(name) || 'kurs';
+      a.href = url;
+      a.download = `${safeCourseName}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus('Fertig! Der Download sollte gestartet sein.', 'ok');
+    } catch(err){
+      console.error(err);
+      setStatus('Beim Erstellen der ZIP-Datei ist ein Fehler aufgetreten.', 'err');
+    } finally {
+      buildZipBtn.disabled = false;
+    }
+  }
+
+  buildZipBtn.addEventListener('click', buildZip);
+</script>
+
+</body>
+</html>
