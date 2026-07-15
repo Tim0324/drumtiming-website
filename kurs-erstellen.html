@@ -228,18 +228,35 @@
           <input type="file" class="l-file" accept=".xml,text/xml,application/xml">
         </div>
       </div>
-      <div class="row3" style="margin-top:16px;">
+      <div class="row" style="margin-top:16px;">
         <div class="field">
           <label>Ziel-BPM</label>
           <input type="number" class="l-bpm" min="1" placeholder="z. B. 90">
         </div>
         <div class="field">
+          <label>Taktart</label>
+          <select class="l-timesig">
+            <option value="">Keine Angabe</option>
+            <option value="4/4">4/4</option>
+            <option value="3/4">3/4</option>
+            <option value="2/4">2/4</option>
+            <option value="6/8">6/8</option>
+            <option value="9/8">9/8</option>
+            <option value="12/8">12/8</option>
+            <option value="5/4">5/4</option>
+            <option value="7/8">7/8</option>
+            <option value="custom">Andere …</option>
+          </select>
+        </div>
+      </div>
+      <div class="row custom-timesig" style="display:none; margin-top:16px;">
+        <div class="field">
           <label>Zähler (beats/bar)</label>
-          <input type="number" class="l-beats" min="1" placeholder="optional">
+          <input type="number" class="l-beats-custom" min="1" placeholder="z. B. 5">
         </div>
         <div class="field">
           <label>Nenner (beat note)</label>
-          <input type="number" class="l-notevalue" min="1" placeholder="optional">
+          <input type="number" class="l-notevalue-custom" min="1" placeholder="z. B. 4">
         </div>
       </div>
       <div class="field" style="margin-top:16px;">
@@ -252,6 +269,12 @@
     const dropZone = card.querySelector('.file-drop');
     const fileInput = card.querySelector('.l-file');
     const fnameEl = card.querySelector('[data-role="fname"]');
+    const timesigSelect = card.querySelector('.l-timesig');
+    const customTimesigRow = card.querySelector('.custom-timesig');
+
+    timesigSelect.addEventListener('change', () => {
+      customTimesigRow.style.display = timesigSelect.value === 'custom' ? 'grid' : 'none';
+    });
 
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
@@ -317,9 +340,23 @@
       const title = card.querySelector('.l-title').value.trim();
       const fileInput = card.querySelector('.l-file');
       const bpm = card.querySelector('.l-bpm').value.trim();
-      const beats = card.querySelector('.l-beats').value.trim();
-      const noteValue = card.querySelector('.l-notevalue').value.trim();
       const passScore = card.querySelector('.l-pass').value.trim();
+
+      const timesigValue = card.querySelector('.l-timesig').value;
+      let beats = '';
+      let noteValue = '';
+      if(timesigValue === 'custom'){
+        beats = card.querySelector('.l-beats-custom').value.trim();
+        noteValue = card.querySelector('.l-notevalue-custom').value.trim();
+        if((beats && !noteValue) || (!beats && noteValue)){
+          setStatus(`Lektion ${i + 1}: bitte Zähler und Nenner beide ausfüllen (oder beide leer lassen).`, 'err');
+          return;
+        }
+      } else if(timesigValue){
+        const parts = timesigValue.split('/');
+        beats = parts[0];
+        noteValue = parts[1];
+      }
 
       if(!title){
         setStatus(`Lektion ${i + 1}: bitte einen Titel eingeben.`, 'err');
