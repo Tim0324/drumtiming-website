@@ -76,14 +76,35 @@
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
 
-  input[type="text"], input[type="number"], textarea{
+  input[type="text"], input[type="number"], textarea, select{
     width:100%; background:var(--bg-elevated); border:1px solid var(--border);
     border-radius:9px; padding:11px 13px; color:var(--text); font-family:var(--font-body);
     font-size:14.5px; transition:border-color .15s ease;
   }
-  input:focus, textarea:focus{ border-color:var(--teal-dim); }
+  input:focus, textarea:focus, select:focus{ border-color:var(--teal-dim); }
   textarea{ resize:vertical; min-height:70px; }
   .hint{ font-size:12.5px; color:var(--text-muted); margin-top:6px; }
+
+  /* Number-Inputs: native Spinner-Pfeile entfernen, passen nicht zum Theme */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button{
+    -webkit-appearance:none; margin:0;
+  }
+  input[type="number"]{ -moz-appearance:textfield; }
+
+  /* Select: eigenes, zum Theme passendes Chevron statt Browser-Default */
+  select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    cursor:pointer;
+    padding-right:38px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7' fill='none'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%2393959d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+  }
+  select:focus{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7' fill='none'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%2300c9a0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  select option{ background:var(--bg-elevated); color:var(--text); }
 
   .lesson-card{
     background:var(--bg-elevated); border:1px solid var(--border); border-radius:12px;
@@ -223,9 +244,9 @@
           <div class="icon">↑</div>
           <div>
             <div class="fname" data-role="fname">Keine Datei ausgewählt</div>
-            <div class="fhint">Klicken zum Hochladen (.xml)</div>
+            <div class="fhint">Klicken zum Hochladen (.xml, .musicxml)</div>
           </div>
-          <input type="file" class="l-file" accept=".xml,text/xml,application/xml">
+          <input type="file" class="l-file" accept=".xml,.musicxml,text/xml,application/xml,application/vnd.recordare.musicxml+xml">
         </div>
       </div>
       <div class="row" style="margin-top:16px;">
@@ -378,11 +399,12 @@
       const file = fileInput.files[0];
       let fileName = sanitizeFileName(file.name);
       // Eindeutigkeit sicherstellen, falls zwei Lektionen denselben Dateinamen haben
-      let base = fileName.replace(/\.xml$/i, '');
+      let base = fileName.replace(/\.(musicxml|xml)$/i, '');
+      let ext = (fileName.match(/\.(musicxml|xml)$/i) || ['', 'xml'])[1].toLowerCase();
       let candidate = fileName;
       let suffix = 1;
       while(usedFileNames.has(candidate)){
-        candidate = `${base}_${suffix}.xml`;
+        candidate = `${base}_${suffix}.${ext}`;
         suffix++;
       }
       fileName = candidate;
