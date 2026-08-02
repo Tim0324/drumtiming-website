@@ -14,6 +14,7 @@
     --text-muted:#93959d;
     --teal:#00c9a0;
     --teal-dim:#00aa88;
+    --red:#ff5c5c;
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{
@@ -61,6 +62,47 @@
     color:var(--text); font-weight:600;
   }
   .action:hover{ background:rgba(0,201,160,0.08); text-decoration:none; }
+
+  /* ---- Elektronisches Widerrufsformular ---- */
+  .withdraw-card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:28px; margin:16px 0 8px;
+  }
+  .withdraw-card h3{
+    font-family:"Space Grotesk",sans-serif; font-weight:600;
+    font-size:17px; margin-bottom:6px; color:var(--text);
+  }
+  .withdraw-card .hint{ font-size:13.5px; color:var(--text-muted); margin-bottom:18px; }
+  label{ display:block; font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
+  .field{ margin-bottom:16px; }
+  input[type="text"], input[type="email"], textarea{
+    width:100%; background:#1b1d22; border:1px solid var(--border);
+    border-radius:9px; padding:11px 13px; color:var(--text);
+    font-family:"Inter",sans-serif; font-size:14.5px;
+  }
+  textarea{ resize:vertical; min-height:80px; }
+  input:focus, textarea:focus{ outline:none; border-color:var(--teal-dim); }
+  button.submit-btn{
+    width:100%; margin-top:4px; padding:13px; border:none; border-radius:10px;
+    background:var(--teal-dim); color:#08120f; font-weight:600; font-size:14.5px;
+    cursor:pointer; font-family:"Inter",sans-serif;
+  }
+  button.submit-btn:hover{ background:var(--teal); }
+  button.submit-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .form-status{ margin-top:14px; font-size:13.5px; }
+  .form-status.err{ color:var(--red); }
+
+  .confirmation{
+    display:none;
+    background:rgba(0,201,160,0.08); border:1px solid var(--teal-dim);
+    border-radius:14px; padding:26px 28px; margin:16px 0 8px;
+  }
+  .confirmation h3{
+    font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:17px;
+    color:var(--text); margin-bottom:8px;
+  }
+  .confirmation p{ margin-bottom:0; }
+
   .form{
     background:var(--card); border:1px solid var(--border);
     border-radius:12px; padding:24px; margin-top:16px;
@@ -88,7 +130,7 @@
 
 <main>
   <h1>Widerrufsbelehrung</h1>
-  <p>Stand: 30. Juli 2026</p>
+  <p>Stand: 02. August 2026</p>
 
   <h2>Widerrufsrecht</h2>
   <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen
@@ -99,16 +141,53 @@
      RhythmLab, Panoramastraße 1, 71711 Steinheim an der Murr, Deutschland,
      Telefon: +49 (0) 15253429601, E-Mail:
      <a href="mailto:info@drumtiming.com">info@drumtiming.com</a>) mittels
-     einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder
-     eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen,
-     informieren. Sie können dafür das beigefügte Muster-Widerrufsformular
-     verwenden, das jedoch nicht vorgeschrieben ist.</p>
+     einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief,
+     eine E-Mail, oder das elektronische Formular weiter unten auf dieser
+     Seite) über Ihren Entschluss, diesen Vertrag zu widerrufen,
+     informieren. Sie können dafür auch das weiter unten abgedruckte
+     Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben
+     ist.</p>
   <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über
      die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
-  <a class="action"
-     href="mailto:info@drumtiming.com?subject=Widerruf%20RhythmLab-Abonnement">
-    Widerruf per E-Mail erklären
-  </a>
+
+  <h2>Widerruf elektronisch erklären</h2>
+  <div class="withdraw-card" id="withdraw-form-card">
+    <h3>Direkt hier widerrufen</h3>
+    <p class="hint">Nach dem Absenden erhalten Sie sofort eine Bestätigung auf
+       dieser Seite sowie eine automatische Eingangsbestätigung per E-Mail.
+       Ihr Widerruf wird danach von uns bearbeitet (Stornierung des Abos,
+       ggf. anteilige Rückerstattung) — hierüber informieren wir Sie separat.</p>
+
+    <form id="withdraw-form">
+      <div class="field">
+        <label for="w-name">Name</label>
+        <input type="text" id="w-name" required>
+      </div>
+      <div class="field">
+        <label for="w-email">E-Mail-Adresse Ihres Kontos</label>
+        <input type="email" id="w-email" required>
+      </div>
+      <div class="field">
+        <label for="w-order">Bestell-/Vertragsnummer (falls bekannt, optional)</label>
+        <input type="text" id="w-order">
+      </div>
+      <div class="field">
+        <label for="w-message">Nachricht (optional)</label>
+        <textarea id="w-message" placeholder="z. B. Datum der Bestellung, weitere Angaben"></textarea>
+      </div>
+      <button type="submit" class="submit-btn" id="w-submit">Widerruf jetzt absenden</button>
+      <div class="form-status" id="w-status"></div>
+    </form>
+  </div>
+
+  <div class="confirmation" id="withdraw-confirmation">
+    <h3>✓ Ihr Widerruf ist eingegangen</h3>
+    <p>Wir haben Ihren Widerruf am <strong id="w-confirmed-time"></strong>
+       erhalten. Eine Eingangsbestätigung wurde zusätzlich an Ihre
+       E-Mail-Adresse verschickt. Wir bearbeiten Ihren Widerruf
+       schnellstmöglich und melden uns gesondert, sobald er abgeschlossen
+       ist.</p>
+  </div>
 
   <h2>Folgen des Widerrufs</h2>
   <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die
@@ -130,7 +209,8 @@
      vorgesehenen Dienstleistungen entspricht.</p>
 
   <h2>Muster-Widerrufsformular</h2>
-  <p>(Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses
+  <p>(Wenn Sie den Vertrag lieber postalisch oder per E-Mail widerrufen
+     wollen, statt das Formular oben zu nutzen, dann füllen Sie bitte dieses
      Formular aus und senden Sie es zurück.)</p>
   <div class="form">
     <p>An: Timo Karl, handelnd unter RhythmLab, Panoramastraße 1,
@@ -149,6 +229,10 @@
     <p>Datum: <span class="line"></span></p>
     <p>(*) Unzutreffendes streichen.</p>
   </div>
+  <a class="action"
+     href="mailto:info@drumtiming.com?subject=Widerruf%20RhythmLab-Abonnement">
+    Alternativ: Widerruf per E-Mail erklären
+  </a>
 </main>
 
 <footer>
@@ -160,6 +244,74 @@
     <a href="/widerruf.html">Widerrufsbelehrung</a>
   </div>
 </footer>
+
+<script>
+  // Bei einer echten Domain anpassen (dieselbe Basis-URL wie
+  // config.API_BASE_URL im Backend / wie in reset-password.html).
+  const API_BASE_URL = "https://api.drumtiming.com";
+
+  const form = document.getElementById("withdraw-form");
+  const statusEl = document.getElementById("w-status");
+  const submitBtn = document.getElementById("w-submit");
+  const formCard = document.getElementById("withdraw-form-card");
+  const confirmationEl = document.getElementById("withdraw-confirmation");
+  const confirmedTimeEl = document.getElementById("w-confirmed-time");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusEl.textContent = "";
+    statusEl.className = "form-status";
+
+    const payload = {
+      full_name: document.getElementById("w-name").value.trim(),
+      email: document.getElementById("w-email").value.trim(),
+      order_reference: document.getElementById("w-order").value.trim() || null,
+      message: document.getElementById("w-message").value.trim() || null,
+    };
+
+    if (!payload.full_name || !payload.email) {
+      statusEl.textContent = "Bitte Name und E-Mail-Adresse angeben.";
+      statusEl.className = "form-status err";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    statusEl.textContent = "Wird gesendet …";
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/withdrawals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const submitted = new Date(data.submitted_at);
+        confirmedTimeEl.textContent = submitted.toLocaleString("de-DE", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit",
+        }) + " Uhr";
+        formCard.style.display = "none";
+        confirmationEl.style.display = "block";
+        confirmationEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        let msg = "Der Widerruf konnte nicht übermittelt werden. Bitte versuchen Sie es erneut oder nutzen Sie die E-Mail-/Postoption.";
+        try {
+          const data = await res.json();
+          if (data.detail) msg = typeof data.detail === "string" ? data.detail : msg;
+        } catch (_) {}
+        statusEl.textContent = msg;
+        statusEl.className = "form-status err";
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      statusEl.textContent = "Netzwerkfehler — bitte später erneut versuchen oder die E-Mail-/Postoption nutzen.";
+      statusEl.className = "form-status err";
+      submitBtn.disabled = false;
+    }
+  });
+</script>
 
 </body>
 </html>
