@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verträge hier kündigen — RhythmLab</title>
+<link href="/fonts/fonts.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15161a; --card:#1f2127; --border:#2a2d34; --text:#f1f0ec;
+    --text-muted:#93959d; --teal:#00c9a0; --teal-dim:#00aa88; --red:#ff5c5c;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--text); font-family:"Inter",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  a{ color:var(--teal); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  nav.top{
+    position:sticky; top:0; z-index:20;
+    background:rgba(21,22,26,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.top .wrap{
+    max-width:640px; margin:0 auto; padding:0 24px;
+    height:64px; display:flex; align-items:center; gap:10px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:18px;
+  }
+  .brand .mark{
+    width:10px; height:10px; border-radius:3px; background:var(--teal);
+    box-shadow:0 0 12px rgba(0,201,160,0.7);
+  }
+  .back{ margin-left:auto; font-size:14px; color:var(--text-muted); }
+  .back:hover{ color:var(--text); }
+
+  main{ max-width:640px; margin:0 auto; padding:48px 24px 80px; }
+
+  h1{
+    font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:28px;
+    letter-spacing:-0.01em; margin-bottom:8px;
+  }
+  p.lead{ color:var(--text-muted); font-size:15px; margin-bottom:28px; }
+
+  .step-indicator{
+    display:flex; gap:8px; margin-bottom:28px; font-size:12.5px;
+    font-family:"JetBrains Mono", monospace; color:var(--text-muted);
+  }
+  .step-indicator span{
+    padding:4px 10px; border-radius:999px; border:1px solid var(--border);
+  }
+  .step-indicator span.active{
+    border-color:var(--teal-dim); color:var(--teal); background:rgba(0,201,160,0.08);
+  }
+
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:28px; margin-bottom:16px;
+  }
+  .card h2{
+    font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:18px;
+    margin-bottom:6px;
+  }
+  .card .hint{ font-size:13.5px; color:var(--text-muted); margin-bottom:20px; }
+
+  label{ display:block; font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
+  .field{ margin-bottom:16px; }
+  input[type="email"], input[type="password"]{
+    width:100%; background:#1b1d22; border:1px solid var(--border);
+    border-radius:9px; padding:11px 13px; color:var(--text); font-size:14.5px;
+  }
+  input:focus{ outline:none; border-color:var(--teal-dim); }
+
+  button{
+    width:100%; padding:13px; border:none; border-radius:10px;
+    background:var(--teal-dim); color:#08120f; font-weight:600; font-size:14.5px;
+    cursor:pointer; font-family:"Inter",sans-serif;
+  }
+  button:hover{ background:var(--teal); }
+  button:disabled{ opacity:0.5; cursor:not-allowed; }
+  button.danger{ background:var(--red); color:#1a0a0a; }
+  button.danger:hover{ background:#ff7373; }
+  button.secondary{
+    background:transparent; border:1px solid var(--border); color:var(--text);
+    margin-top:10px;
+  }
+
+  .form-status{ margin-top:14px; font-size:13.5px; }
+  .form-status.err{ color:var(--red); }
+
+  .contract-details{ margin-bottom:22px; }
+  .contract-details dl{ display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:14.5px; }
+  .contract-details dt{ color:var(--text-muted); }
+  .contract-details dd{ color:var(--text); font-weight:600; }
+
+  .confirmation{
+    display:none;
+    background:rgba(0,201,160,0.08); border:1px solid var(--teal-dim);
+    border-radius:14px; padding:28px; margin-bottom:16px;
+  }
+  .confirmation h2{
+    font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:18px;
+    margin-bottom:10px;
+  }
+  .confirmation dl{ display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:14.5px; margin:16px 0; }
+  .confirmation dt{ color:var(--text-muted); }
+  .confirmation dd{ color:var(--text); font-weight:600; }
+
+  #step1, #step2{ display:none; }
+  #step1.visible, #step2.visible{ display:block; }
+
+  @media print{
+    nav.top, .step-indicator, button, .card{ display:none !important; }
+    .confirmation{ display:block !important; border:1px solid #333; }
+  }
+
+  footer{ border-top:1px solid var(--border); padding:28px 0; margin-top:24px; }
+  footer .wrap{
+    max-width:640px; margin:0 auto; padding:0 24px;
+    font-size:13.5px; color:var(--text-muted);
+    display:flex; gap:20px; flex-wrap:wrap;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span>RhythmLab</div>
+    <a class="back" href="/">← Zurück zur Startseite</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Verträge hier kündigen</h1>
+  <p class="lead">
+    Über dieses Formular können Sie Ihr RhythmLab-Pro-Abonnement direkt und
+    kostenlos kündigen. Nach der Bestätigung erhalten Sie sofort eine
+    schriftliche Kündigungsbestätigung auf dieser Seite sowie per E-Mail.
+  </p>
+
+  <div class="step-indicator">
+    <span id="indicator-1" class="active">1. Identifizieren</span>
+    <span id="indicator-2">2. Vertrag prüfen &amp; kündigen</span>
+  </div>
+
+  <!-- SCHRITT 1: LOGIN -->
+  <div class="card" id="step1">
+    <h2>Ihr Konto</h2>
+    <p class="hint">Bitte melden Sie sich mit Ihren RhythmLab-Zugangsdaten an,
+       damit wir Ihren Vertrag zuordnen können.</p>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="l-email">E-Mail-Adresse</label>
+        <input type="email" id="l-email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="l-password">Passwort</label>
+        <input type="password" id="l-password" required autocomplete="current-password">
+      </div>
+      <button type="submit" id="login-submit">Weiter</button>
+      <div class="form-status" id="login-status"></div>
+    </form>
+  </div>
+
+  <!-- SCHRITT 2: VERTRAG PRÜFEN + KÜNDIGEN -->
+  <div class="card" id="step2">
+    <h2>Ihr Vertrag</h2>
+    <p class="hint">Bitte prüfen Sie die Angaben. Mit Klick auf „Jetzt
+       kostenpflichtig kündigen“ wird Ihr Abonnement zum unten genannten
+       Termin gekündigt.</p>
+
+    <div class="contract-details">
+      <dl>
+        <dt>Vertragsart</dt><dd>RhythmLab Pro — Abonnement</dd>
+        <dt>Status</dt><dd id="d-status">–</dd>
+        <dt>Nächste Abrechnung / Kündigungstermin</dt><dd id="d-period-end">–</dd>
+      </dl>
+    </div>
+
+    <button type="button" class="danger" id="cancel-submit">Jetzt kündigen</button>
+    <button type="button" class="secondary" id="cancel-abort">Abbrechen</button>
+    <div class="form-status" id="cancel-status"></div>
+  </div>
+
+  <!-- BESTÄTIGUNG -->
+  <div class="confirmation" id="confirmation">
+    <h2>✓ Ihre Kündigung wurde bestätigt</h2>
+    <p>Wir haben Ihre Kündigung erhalten. Eine schriftliche Bestätigung wurde
+       zusätzlich an Ihre E-Mail-Adresse gesendet.</p>
+    <dl>
+      <dt>Kündigung eingegangen am</dt><dd id="c-requested-at">–</dd>
+      <dt>Ihr Zugang endet am</dt><dd id="c-effective-date">–</dd>
+    </dl>
+    <button type="button" class="secondary" onclick="window.print()">Diese Bestätigung drucken/speichern</button>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="mark" style="width:8px;height:8px;"></span>RhythmLab</div>
+    <div class="legal">
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutz</a>
+      <a href="/agb.html">AGB</a>
+      <a href="/widerruf.html">Widerrufsbelehrung</a>
+      <a href="/kuendigen.html">Verträge hier kündigen</a>
+      <a href="mailto:info@drumtiming.com">Kontakt</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Bei einer echten Domain anpassen (dieselbe Basis-URL wie
+  // config.API_BASE_URL im Backend / wie in reset-password.html).
+  const API_BASE_URL = "https://api.drumtiming.com";
+
+  let accessToken = null;
+
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const confirmationEl = document.getElementById("confirmation");
+  const indicator1 = document.getElementById("indicator-1");
+  const indicator2 = document.getElementById("indicator-2");
+
+  step1.classList.add("visible");
+
+  // ---------------- SCHRITT 1: LOGIN ----------------
+
+  const loginForm = document.getElementById("login-form");
+  const loginStatus = document.getElementById("login-status");
+  const loginSubmit = document.getElementById("login-submit");
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    loginStatus.textContent = "";
+    loginStatus.className = "form-status";
+    loginSubmit.disabled = true;
+    loginSubmit.textContent = "Wird geprüft …";
+
+    const email = document.getElementById("l-email").value.trim();
+    const password = document.getElementById("l-password").value;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        loginStatus.textContent = "E-Mail oder Passwort falsch.";
+        loginStatus.className = "form-status err";
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "Weiter";
+        return;
+      }
+
+      const data = await res.json();
+      accessToken = data.access_token;
+
+      await loadSubscription();
+
+      step1.classList.remove("visible");
+      step2.classList.add("visible");
+      indicator1.classList.remove("active");
+      indicator2.classList.add("active");
+    } catch (err) {
+      loginStatus.textContent = "Netzwerkfehler — bitte später erneut versuchen.";
+      loginStatus.className = "form-status err";
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = "Weiter";
+    }
+  });
+
+  // ---------------- SCHRITT 2: VERTRAG LADEN + KÜNDIGEN ----------------
+
+  async function loadSubscription() {
+    const res = await fetch(`${API_BASE_URL}/billing/subscription`, {
+      headers: { "Authorization": `Bearer ${accessToken}` },
+    });
+    const sub = await res.json();
+
+    const statusLabels = {
+      active: "Aktiv", trialing: "Testphase (aktiv)",
+      past_due: "Zahlung fehlgeschlagen", canceled: "Bereits gekündigt",
+      none: "Kein aktives Abo",
+    };
+    document.getElementById("d-status").textContent =
+      statusLabels[sub.status] || sub.status;
+
+    const periodEnd = document.getElementById("d-period-end");
+    if (sub.current_period_end) {
+      const d = new Date(sub.current_period_end);
+      periodEnd.textContent = d.toLocaleDateString("de-DE", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+      });
+    } else {
+      periodEnd.textContent = "–";
+    }
+
+    if (sub.status === "canceled" || sub.status === "none") {
+      document.getElementById("cancel-submit").disabled = true;
+      document.getElementById("cancel-status").textContent =
+        "Für dieses Konto besteht aktuell kein kündbares Abonnement.";
+    }
+  }
+
+  document.getElementById("cancel-abort").addEventListener("click", () => {
+    window.location.href = "/";
+  });
+
+  const cancelSubmit = document.getElementById("cancel-submit");
+  const cancelStatus = document.getElementById("cancel-status");
+
+  cancelSubmit.addEventListener("click", async () => {
+    cancelStatus.textContent = "";
+    cancelStatus.className = "form-status";
+    cancelSubmit.disabled = true;
+    cancelSubmit.textContent = "Wird gekündigt …";
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/billing/cancel-subscription`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${accessToken}` },
+      });
+
+      if (!res.ok) {
+        let msg = "Die Kündigung konnte nicht übermittelt werden. Bitte versuchen Sie es erneut.";
+        try {
+          const data = await res.json();
+          if (data.detail) msg = typeof data.detail === "string" ? data.detail : msg;
+        } catch (_) {}
+        cancelStatus.textContent = msg;
+        cancelStatus.className = "form-status err";
+        cancelSubmit.disabled = false;
+        cancelSubmit.textContent = "Jetzt kündigen";
+        return;
+      }
+
+      const data = await res.json();
+
+      const requested = new Date(data.requested_at);
+      document.getElementById("c-requested-at").textContent =
+        requested.toLocaleString("de-DE", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit",
+        }) + " Uhr";
+
+      if (data.effective_date) {
+        const eff = new Date(data.effective_date);
+        document.getElementById("c-effective-date").textContent =
+          eff.toLocaleDateString("de-DE", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+          });
+      } else {
+        document.getElementById("c-effective-date").textContent =
+          "wird Ihnen gesondert per E-Mail mitgeteilt";
+      }
+
+      step2.classList.remove("visible");
+      confirmationEl.style.display = "block";
+      confirmationEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      cancelStatus.textContent = "Netzwerkfehler — bitte später erneut versuchen.";
+      cancelStatus.className = "form-status err";
+      cancelSubmit.disabled = false;
+      cancelSubmit.textContent = "Jetzt kündigen";
+    }
+  });
+</script>
+
+</body>
+</html>
