@@ -252,7 +252,10 @@
 <script>
   // Bei einer echten Domain anpassen (dieselbe Basis-URL wie
   // config.API_BASE_URL im Backend / wie in reset-password.html).
-  const API_BASE_URL = "https://api.drumtiming.com";
+  const API_BASE_URL =
+  location.hostname === "127.0.0.1" || location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://api.drumtiming.com";
 
   const form = document.getElementById("withdraw-form");
   const statusEl = document.getElementById("w-status");
