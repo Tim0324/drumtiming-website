@@ -237,23 +237,21 @@
 
 <footer>
   <div class="wrap">
-    <div class="brand"><span class="mark" style="width:8px;height:8px;"></span>RhythmLab</div>
-    <div class="legal">
-      <a href="/impressum.html">Impressum</a>
-      <a href="/datenschutz.html">Datenschutz</a>
-      <a href="/agb.html">AGB</a>
-      <a href="/widerruf.html">Widerrufsbelehrung</a>
-      <a href="/kuendigen.html">Verträge hier kündigen</a>
-      <a href="mailto:info@drumtiming.com">Kontakt</a>
-    </div>
+    <a href="/">RhythmLab</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/datenschutz.html">Datenschutz</a>
+    <a href="/agb.html">AGB</a>
+    <a href="/widerruf.html">Widerrufsbelehrung</a>
   </div>
 </footer>
 
 <script>
-  // Bei einer echten Domain anpassen (dieselbe Basis-URL wie
-  // config.API_BASE_URL im Backend / wie in reset-password.html).
-  const API_BASE_URL =
-  location.hostname === "127.0.0.1" || location.hostname === "localhost"
+  // Erkennt automatisch, ob diese Seite lokal (zum Testen) oder auf
+  // der echten Website aufgerufen wird, und wählt das passende
+  // Backend — kein manuelles Umschalten mehr nötig, siehe
+  // PATCH_ANLEITUNG_CORS_LOKAL.md.
+  const _isLocal = ["localhost", "127.0.0.1", ""].includes(location.hostname);
+  const API_BASE_URL = _isLocal
     ? "http://127.0.0.1:8000"
     : "https://api.drumtiming.com";
 
